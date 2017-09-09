@@ -59,7 +59,7 @@ function createEmptyPlayer(client) {
 
 
 
-connect().use(serveStatic(__dirname)).listen(80, run)
+connect().use(serveStatic(__dirname)).listen(3000, run)
 
 function run() {
   console.log('web server running on port 3001')
