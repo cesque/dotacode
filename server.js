@@ -2,7 +2,9 @@ var connect = require('connect');
 var serveStatic = require('serve-static');
 
 var d2gsi = require('dota2-gsi');
-var server = new d2gsi()
+var server = new d2gsi({
+  port: 3003
+})
 
 const WebSocket = require('ws')
 
@@ -59,7 +61,7 @@ function createEmptyPlayer(client) {
 
 
 
-connect().use(serveStatic(__dirname)).listen(3000, run)
+connect().use(serveStatic(__dirname)).listen(3001, run)
 
 function run() {
   console.log('web server running on port 3001')

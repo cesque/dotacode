@@ -1,6 +1,6 @@
 //const socket = new WebSocket('ws://localhost:3002');
 //const socket = new WebSocket('ws://46.101.78.211:3002');
-const socket = new WebSocket('http://localhost');
+const socket = new WebSocket('http://localhost:3002');
 
 var app = new Vue({
   el: '#app',
