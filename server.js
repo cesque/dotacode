@@ -2,9 +2,7 @@ var connect = require('connect');
 var serveStatic = require('serve-static');
 
 var d2gsi = require('dota2-gsi');
-var server = new d2gsi({
-  port: 3003
-})
+var server = new d2gsi()
 
 const WebSocket = require('ws')
 
