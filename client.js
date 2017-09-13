@@ -1,4 +1,4 @@
-const socket = new WebSocket('ws://IP ADDRESS GOES HERE:3002');
+const socket = new WebSocket('ws://94.173.115.55:3002');
 
 var app = new Vue({
   el: '#app',

@@ -4,6 +4,8 @@ var serveStatic = require('serve-static');
 var d2gsi = require('dota2-gsi');
 var server = new d2gsi()
 
+var dota_english = require('./dota_english.json').lang.Tokens
+
 const WebSocket = require('ws')
 
 const wss = new WebSocket.Server({ port: 3002 })
@@ -18,19 +20,14 @@ wss.broadcast = function broadcast(data) {
 
 var players = []
 
-server.events.on('newclient', function(client) {
+server.events.on('newclient', function (client) {
   console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth + ", Name: " + client.gamestate.player.name)
 
-  client.on('player:activity', function(activity) {
+  client.on('player:activity', function (activity) {
     if (activity == 'playing') console.log("Game started!");
     createEmptyPlayer(client)
   })
-  client.on('player:xpm', (amount) => {
-    set(client, 'xpm', amount)
-  })
-  client.on('player:gpm', (amount) => {
-    set(client, 'gpm', amount)
-  })
+  client.on('newdata', (state) => update(client, state))
 })
 
 function set(client, property, amount) {
@@ -50,12 +47,27 @@ function set(client, property, amount) {
 function createEmptyPlayer(client) {
   return player = {
     ip: client.ip,
-    name: client.gamestate.player.name,
-    gpm: 0,
-    xpm: 0
+    state: {},
+    hero_name: ''
   }
 }
 
+function update(client, state) {
+  console.log(players)
+  var player = players.find(x => x.ip == client.ip)
+  if (!player) {
+    players.push(createEmptyPlayer(client))
+    return
+  }
+
+  player.state = state
+  player.hero_name = dota_english[state.hero.name]
+
+  wss.broadcast(JSON.stringify({
+    type: 'update',
+    data: JSON.stringify(players)
+  }))
+}
 
 
 

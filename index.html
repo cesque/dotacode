@@ -10,7 +10,10 @@
   <div id="app">
     <ol>
       <li v-for="player in players">
-        {{player.name}} - GPM: {{player.gpm}} - XPM: {{player.xpm}}
+        {{player.state.player.name}} ({{player.hero_name}}) - 
+        GPM: {{player.state.player.gpm}} - XPM: {{player.state.player.xpm}} - LH: {{player.state.player.last_hits}} 
+        --- Health: {{player.state.hero.health}}/{{player.state.hero.max_health}} ({{player.state.hero.health_percent}}%) 
+        - Mana: {{player.state.hero.mana}}/{{player.state.hero.max_mana}} ({{player.state.hero.mana_percent}}%)
       </li>
     </ol>
   </div>
