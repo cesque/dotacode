@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
   <title>Document</title>
 </head>
+
 <body>
   <div id="app">
-    <ol>
-      <li v-for="player in players">
-        {{player.state.player.name}} ({{player.hero_name}}) - 
-        GPM: {{player.state.player.gpm}} - XPM: {{player.state.player.xpm}} - LH: {{player.state.player.last_hits}} 
-        --- Health: {{player.state.hero.health}}/{{player.state.hero.max_health}} ({{player.state.hero.health_percent}}%) 
-        - Mana: {{player.state.hero.mana}}/{{player.state.hero.max_mana}} ({{player.state.hero.mana_percent}}%)
+    <ul>
+      <li class="player" v-for="player in players">
+        <span class="username">{{player.state.player.name}}</span>
+        <span class="hero-name">{{player.hero_name}}</span>
+        <span class="level">(Level {{player.state.hero.level}})</span>
+        <span class="divider"></span>
+        <span class="gpm">GPM: {{player.state.player.gpm}}</span>
+        <span class="divider"></span>
+        <span class="xpm">XPM: {{player.state.player.xpm}}</span>
+        <span class="divider"></span>
+        <span class="lasthits">LH: {{player.state.player.last_hits}}</span>
+        <span class="divider"></span>
+        <span class="health">Health:
+          <span class="health__value" v-bind:class="{ danger: isInDangerRange(player.state.hero.health, 0, player.state.hero.max_health) }" v-bind:style="{ color: lerpToBlack(231, 76, 60, player.state.hero.health, 0, player.state.hero.max_health) }">{{player.state.hero.health}}/{{player.state.hero.max_health}} ({{player.state.hero.health_percent}}%)</span>
+        </span>
+        <span class="mana">Mana:
+          <span class="mana__value" v-bind:style="{ color: lerpToBlack(52, 152, 219, player.state.hero.mana, 0, player.state.hero.max_mana) }">{{player.state.hero.mana}}/{{player.state.hero.max_mana}} ({{player.state.hero.mana_percent}}%)</span>
+        </span>
+        <ol>
+          <li v-for="ability in player.state.abilities">
+            <span class="ability" v-bind:class="{'ability--available': ability.can_cast}">
+              {{ability.localised_name}}
+              <span class="ability__cooldown"> ({{ability.cooldown}})</span>
+            </span>
+          </li>
+        </ol>
       </li>
-    </ol>
+      </ol>
   </div>
 </body>
 <script src="https://unpkg.com/vue"></script>
 <script src="client.js"></script>
+
 </html>

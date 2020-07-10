@@ -4,6 +4,23 @@ var app = new Vue({
   el: '#app',
   data: {
     players: []
+  },
+  methods: {
+    lerpOpacity: function (r, g, b, val, min, max) {
+      let range = max - min
+      let p = (val - min) / range
+      return `rgba(${r},${g},${b},${p.toFixed(2)})`
+    },
+    lerpToBlack: function (r, g, b, value, min, max) {
+      let range = max - min
+      let p = (value - min) / range
+      return `rgba(${Math.round(r*p)},${Math.round(g*p)},${Math.round(b*p)},1)`
+    },
+    isInDangerRange: function (value, min, max) {
+      let range = max - min
+      let p = (value - min) / range
+      return p <= 0.2 && p > 0
+    }
   }
 })
 

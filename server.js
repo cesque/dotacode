@@ -1,7 +1,9 @@
-var connect = require('connect');
-var serveStatic = require('serve-static');
+var fs = require('fs')
 
-var d2gsi = require('dota2-gsi');
+var connect = require('connect')
+var serveStatic = require('serve-static')
+
+var d2gsi = require('dota2-gsi')
 var server = new d2gsi()
 
 var dota_english = require('./dota_english.json').lang.Tokens
@@ -11,6 +13,8 @@ const WebSocket = require('ws')
 const wss = new WebSocket.Server({ port: 3002 })
 
 wss.broadcast = function broadcast(data) {
+  
+  // fs.appendFileSync('./log', JSON.stringify(players, null, 2) + '\n\n')
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data)
@@ -22,13 +26,30 @@ var players = []
 
 server.events.on('newclient', function (client) {
   console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth + ", Name: " + client.gamestate.player.name)
+  if (client.gamestate.player.activity == 'playing') {
+    console.log("Player already in game!")
+    createEmptyPlayer(client)
+    client.on('newdata', (state) => update(client, state))
+  }
 
   client.on('player:activity', function (activity) {
-    if (activity == 'playing') console.log("Game started!");
-    createEmptyPlayer(client)
+    if (activity == 'playing') {
+      console.log("Game started!")
+      createEmptyPlayer(client)
+      client.on('newdata', (state) => update(client, state))
+    } else {
+      let player = player.find(x => x.ip == client.ip)
+      let index = players.indexOf(player)
+      players.splice(index, 1)
+      client.removeAllListeners('newdata')
+    }
   })
-  client.on('newdata', (state) => update(client, state))
+  
 })
+
+function newPlayer(client) {
+  
+}
 
 function set(client, property, amount) {
   console.log('setting ' + property + ' of ' + client.ip + ' to ' + amount)
@@ -62,6 +83,10 @@ function update(client, state) {
 
   player.state = state
   player.hero_name = dota_english[state.hero.name]
+
+  for (let ability in player.state.abilities) {
+    player.state.abilities[ability].localised_name = dota_english['DOTA_Tooltip_ability_' + player.state.abilities[ability].name]
+  }
 
   wss.broadcast(JSON.stringify({
     type: 'update',
